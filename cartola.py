@@ -23,7 +23,7 @@ df = pd.DataFrame(data)
 df.set_index('Nome do Participante', inplace=True)
 
 # Streamlit interface
-st.title('Gráfico de Pontuação no cartola')
+st.title('Gráfico de Pontuação no Cartola')
 
 participantes = df.index.tolist()
 selecionados = st.multiselect('Selecione os Participantes', participantes, default=participantes)
@@ -54,7 +54,7 @@ st.plotly_chart(fig)
 # Adicionar opções de estatísticas
 stat_option = st.selectbox(
     'Escolha a estatística para exibir',
-    ('Menor Pontuação', 'Maior Pontuação', 'Média de Pontuação', 'Total de Pontuação', 'Comparação com a Média do Grupo', 'Comparação com a Mediana do Grupo')
+    ('Menor Pontuação', 'Maior Pontuação', 'Média de Pontuação', 'Total de Pontuação', 'Comparação com a Média do Grupo', 'Comparação com a Mediana do Grupo', 'Média nos Últimos 3 Jogos', 'Regularidade (Desvio Padrão)')
 )
 
 if stat_option == 'Menor Pontuação':
@@ -82,6 +82,14 @@ elif stat_option == 'Comparação com a Mediana do Grupo':
     stat_df.columns = ['Nome do Participante', 'Média do Participante']
     stat_df['Comparação com a Mediana do Grupo'] = stat_df['Média do Participante'] - mediana_grupo
     stat_df['Comparação com a Mediana do Grupo'] = stat_df['Comparação com a Mediana do Grupo'].round(2)
+elif stat_option == 'Média nos Últimos 3 Jogos':
+    stat_df = df_selecionados.iloc[:, -3:].mean(axis=1).reset_index()
+    stat_df.columns = ['Nome do Participante', 'Média nos Últimos 3 Jogos']
+    stat_df['Média nos Últimos 3 Jogos'] = stat_df['Média nos Últimos 3 Jogos'].round(2)
+elif stat_option == 'Regularidade (Desvio Padrão)':
+    stat_df = df_selecionados.std(axis=1).reset_index()
+    stat_df.columns = ['Nome do Participante', 'Desvio Padrão']
+    stat_df['Desvio Padrão'] = stat_df['Desvio Padrão'].round(2)
 
 # Exibir DataFrame sem índice
 st.dataframe(stat_df)
