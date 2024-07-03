@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import numpy as np
 
 # Dados fornecidos
 data = {
@@ -16,8 +17,14 @@ data = {
     'Rodada 9': [64.04, 54.63, 36.84, 48.28, 55.03, 40.33, 31.88, 18.94, 14.24, 0, 0],
     'Rodada 10': [52.15, 67.40, 93.56, 77.82, 77.57, 105.27, 38.67, 28.85, 34.42, 0, 0],
     'Rodada 11': [74.07, 68.46, 55.02, 68.07, 65.00, 37.16, 62.26, 32.30, 36.27, 0, 0],
-    'Rodada 12': [49.10, 65.60, 39.05, 51.98, 54.31, 61.86, 52.40, 46.51, 37.95, 35.52, 52.48] 
+    'Rodada 12': [49.10, 65.60, 39.05, 51.98, 54.31, 61.86, 52.40, 46.51, 37.95, 35.52, 52.48],
+    'Rodada 13': [70.24, 86.11, 59.68, 61.37, 76.75, 51.23, 54.03, 57.55, 33.51, 50.04, 60.71]
 }
+
+# Substituir 0 por None
+for key in data:
+    if key != 'Nome do Participante':
+        data[key] = [None if x == 0 else x for x in data[key]]
 
 df = pd.DataFrame(data)
 df.set_index('Nome do Participante', inplace=True)
@@ -58,36 +65,36 @@ stat_option = st.selectbox(
 )
 
 if stat_option == 'Menor Pontuação':
-    stat_df = df_selecionados.min(axis=1).reset_index()
+    stat_df = df_selecionados.min(axis=1, skipna=True).reset_index()
     stat_df.columns = ['Nome do Participante', 'Menor Pontuação']
 elif stat_option == 'Maior Pontuação':
-    stat_df = df_selecionados.max(axis=1).reset_index()
+    stat_df = df_selecionados.max(axis=1, skipna=True).reset_index()
     stat_df.columns = ['Nome do Participante', 'Maior Pontuação']
 elif stat_option == 'Média de Pontuação':
-    stat_df = df_selecionados.mean(axis=1).reset_index()
+    stat_df = df_selecionados.mean(axis=1, skipna=True).reset_index()
     stat_df.columns = ['Nome do Participante', 'Média de Pontuação']
     stat_df['Média de Pontuação'] = stat_df['Média de Pontuação'].round(2)
 elif stat_option == 'Total de Pontuação':
-    stat_df = df_selecionados.sum(axis=1).reset_index()
+    stat_df = df_selecionados.sum(axis=1, skipna=True).reset_index()
     stat_df.columns = ['Nome do Participante', 'Total de Pontuação']
 elif stat_option == 'Comparação com a Média do Grupo':
-    media_grupo = df.mean(axis=1).mean()
-    stat_df = df_selecionados.mean(axis=1).reset_index()
+    media_grupo = df.mean(axis=1, skipna=True).mean()
+    stat_df = df_selecionados.mean(axis=1, skipna=True).reset_index()
     stat_df.columns = ['Nome do Participante', 'Média do Participante']
     stat_df['Comparação com a Média do Grupo'] = stat_df['Média do Participante'] - media_grupo
     stat_df['Comparação com a Média do Grupo'] = stat_df['Comparação com a Média do Grupo'].round(2)
 elif stat_option == 'Comparação com a Mediana do Grupo':
-    mediana_grupo = df.mean(axis=1).median()
-    stat_df = df_selecionados.mean(axis=1).reset_index()
+    mediana_grupo = df.mean(axis=1, skipna=True).median()
+    stat_df = df_selecionados.mean(axis=1, skipna=True).reset_index()
     stat_df.columns = ['Nome do Participante', 'Média do Participante']
     stat_df['Comparação com a Mediana do Grupo'] = stat_df['Média do Participante'] - mediana_grupo
     stat_df['Comparação com a Mediana do Grupo'] = stat_df['Comparação com a Mediana do Grupo'].round(2)
 elif stat_option == 'Média nos Últimos 3 Jogos':
-    stat_df = df_selecionados.iloc[:, -3:].mean(axis=1).reset_index()
+    stat_df = df_selecionados.iloc[:, -3:].mean(axis=1, skipna=True).reset_index()
     stat_df.columns = ['Nome do Participante', 'Média nos Últimos 3 Jogos']
     stat_df['Média nos Últimos 3 Jogos'] = stat_df['Média nos Últimos 3 Jogos'].round(2)
 elif stat_option == 'Regularidade (Desvio Padrão)':
-    stat_df = df_selecionados.std(axis=1).reset_index()
+    stat_df = df_selecionados.std(axis=1, skipna=True).reset_index()
     stat_df.columns = ['Nome do Participante', 'Desvio Padrão']
     stat_df['Desvio Padrão'] = stat_df['Desvio Padrão'].round(2)
 
