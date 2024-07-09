@@ -19,7 +19,8 @@ data = {
     'Rodada 11': [74.07, 68.46, 55.02, 68.07, 65.00, 37.16, 62.26, 32.30, 36.27, 0, 0],
     'Rodada 12': [49.10, 65.60, 39.05, 51.98, 54.31, 61.86, 52.40, 46.51, 37.95, 35.52, 52.48],
     'Rodada 13': [70.24, 86.11, 59.68, 61.37, 76.75, 51.23, 54.03, 57.55, 33.51, 50.04, 60.71],
-    'Rodada 14': [62.33, 71.88, 73.22, 58.33, 87.08, 58.32, 44.86, 34.39, 52.27, 45.57, 54.07]
+    'Rodada 14': [62.33, 71.88, 73.22, 58.33, 87.08, 58.32, 44.86, 34.39, 52.27, 45.57, 54.07],
+    'Rodada 15': [77.50, 87.70, 81.10, 86.76, 93.26, 82.66, 53.60, 43.76, 37.00, 64.73, 54.66]
 }
 
 # Substituir 0 por None
@@ -99,5 +100,5 @@ elif stat_option == 'Regularidade (Desvio Padrão)':
     stat_df.columns = ['Nome do Participante', 'Desvio Padrão']
     stat_df['Desvio Padrão'] = stat_df['Desvio Padrão'].round(2)
 
-# Exibir DataFrame sem índice
+# Exibir DataFrame
 st.dataframe(stat_df)
