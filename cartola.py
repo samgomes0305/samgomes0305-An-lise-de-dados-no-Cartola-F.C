@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import pearsonr
 
 # Dados fornecidos
 data = {
@@ -104,15 +105,37 @@ elif stat_option == 'Regularidade (Desvio Padrão)':
     stat_df.columns = ['Nome do Participante', 'Desvio Padrão']
     stat_df['Desvio Padrão'] = stat_df['Desvio Padrão'].round(2)
 elif stat_option == 'Gráfico de Correlação':
-    # Calcular a matriz de correlação
-    corr_matrix = df_selecionados.corr()
+    participantes_corr = st.multiselect('Selecione dois Participantes para ver a correlação', participantes, default=participantes[:2])
 
-    # Configurar o gráfico de correlação usando Seaborn
-    fig_corr, ax = plt.subplots()
-    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', ax=ax)
-    ax.set_title('Matriz de Correlação')
+    if len(participantes_corr) == 2:
+        participante_1 = participantes_corr[0]
+        participante_2 = participantes_corr[1]
 
-    st.pyplot(fig_corr)
+        # Obter as pontuações dos dois participantes
+        pontos_1 = df.loc[participante_1]
+        pontos_2 = df.loc[participante_2]
+
+        # Calcular a correlação
+        corr_rodada = pontos_1.corr(pontos_2)
+
+        # Criar o gráfico de dispersão
+        fig_corr = go.Figure(data=go.Scatter(
+            x=pontos_1, 
+            y=pontos_2,
+            mode='markers',
+            marker=dict(size=10, color='rgba(152, 0, 0, .8)', line=dict(width=2, color='DarkSlateGrey')),
+            text=df.columns
+        ))
+
+        fig_corr.update_layout(
+            title=f'Correlação entre {participante_1} e {participante_2}',
+            xaxis_title=f'Pontuação de {participante_1}',
+            yaxis_title=f'Pontuação de {participante_2}',
+            showlegend=False
+        )
+
+        st.plotly_chart(fig_corr)
+        st.write(f"Correlação por rodada: {corr_rodada:.2f}")
 
 # Exibir DataFrame, se não for o gráfico de correlação
 if stat_option != 'Gráfico de Correlação':
