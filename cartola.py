@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import seaborn as sns
+import matplotlib.pyplot as plt
 import numpy as np
 
 # Dados fornecidos
@@ -65,7 +67,7 @@ st.plotly_chart(fig)
 # Adicionar opções de estatísticas
 stat_option = st.selectbox(
     'Escolha a estatística para exibir',
-    ('Menor Pontuação', 'Maior Pontuação', 'Média de Pontuação', 'Total de Pontuação', 'Comparação com a Média do Grupo', 'Comparação com a Mediana do Grupo', 'Média nos Últimos 3 Jogos', 'Regularidade (Desvio Padrão)')
+    ('Menor Pontuação', 'Maior Pontuação', 'Média de Pontuação', 'Total de Pontuação', 'Comparação com a Média do Grupo', 'Comparação com a Mediana do Grupo', 'Média nos Últimos 3 Jogos', 'Regularidade (Desvio Padrão)', 'Gráfico de Correlação')
 )
 
 if stat_option == 'Menor Pontuação':
@@ -101,6 +103,17 @@ elif stat_option == 'Regularidade (Desvio Padrão)':
     stat_df = df_selecionados.std(axis=1, skipna=True).reset_index()
     stat_df.columns = ['Nome do Participante', 'Desvio Padrão']
     stat_df['Desvio Padrão'] = stat_df['Desvio Padrão'].round(2)
+elif stat_option == 'Gráfico de Correlação':
+    # Calcular a matriz de correlação
+    corr_matrix = df_selecionados.corr()
 
-# Exibir DataFrame
-st.dataframe(stat_df)
+    # Configurar o gráfico de correlação usando Seaborn
+    fig_corr, ax = plt.subplots()
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', ax=ax)
+    ax.set_title('Matriz de Correlação')
+
+    st.pyplot(fig_corr)
+
+# Exibir DataFrame, se não for o gráfico de correlação
+if stat_option != 'Gráfico de Correlação':
+    st.dataframe(stat_df)
